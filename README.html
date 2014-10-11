@@ -1,0 +1,240 @@
+<div class="figure">
+<img src="img/header.png" alt="Homework 3" /><p class="caption">Homework 3</p>
+</div>
+<p>This homework was directly taken from csc171 at Harvard. All <em>your</em> work should be original. ;-P This is there homework 1 and will be our homework 3. Please put your work in a bit-bucket repository post the link on blackboard (when there is a place for submission)</p>
+<hr>
+<p><strong>Assignment completed by:</strong> Edit and put your name here</p>
+<p><strong>Email:</strong> put your email here</p>
+<hr>
+<p>In this homework, you will use <a href="http://d3js.org/">D3.js</a> to create an interactive data table and a bar chart. D3 stands for &quot;Data Driven Documents.&quot; It is a library for JavaScript that is very useful for creating interactive visualizations, but D3 can be used to achieve many tasks that other libraries like -- JQuery -- also enable. This homework assumes that you have read and coded along with Chapters 1-8 in <a href="http://www.amazon.com/Interactive-Data-Visualization-Scott-Murray/dp/1449339735/ref=tmm_pap_title_0">D3 - Interactive Data Visualization for the Web</a> by Scott Murray.</p>
+<p>We use data collected and published by the <a href="http://www.bls.gov/">U.S. Bureau of Labor Statistics</a>. The Bureau defines itself as follows:</p>
+<blockquote>
+<p>The Bureau of Labor Statistics is the principal fact-finding agency for the Federal Government in the broad field of labor economics and statistics.</p>
+</blockquote>
+<p>Unemployment data are regularly published on a specific <a href="http://www.bls.gov/web/laus/laumstrk.htm">BLS web page</a>.</p>
+<p>The Bureau of Labor Statistics released, for example, <a href="http://www.bls.gov/news.release/empsit.nr0.htm">a statement</a>:</p>
+<blockquote>
+<p>The unemployment rate declined from 7.0 percent to 6.7 percent in December, while total nonfarm payroll employment edged up (+74,000), the U.S. Bureau of Labor Statistics reported today. Employment rose in retail trade and wholesale trade but was down in information.&quot;</p>
+</blockquote>
+<p>In this homework, we will explore how this unemployment is broken down by state. Below is a brief sample of this data (Nov. 2013., but data on the page are more recent):</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Rank</th>
+<th align="left">State</th>
+<th align="left">Rate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">NORTH DAKOTA</td>
+<td align="left">2.6</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="left">SOUTH DAKOTA</td>
+<td align="left">3.6</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">NEBRASKA</td>
+<td align="left">3.7</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">UTAH</td>
+<td align="left">4.3</td>
+</tr>
+</tbody>
+</table>
+<p>This is essentially a one dimensional dataset — seems simple enough. We will stick to this dataset, and explore the visualization options for such a tiny and simple dataset. Along the way, you will pick up the D3 skills necessary to tackle bigger and more complex datasets.</p>
+<h3 id="formalities">Formalities</h3>
+<p>Ensure you respond to questions in the appropriate text file (as described in the subheading for each section). You can use <a href="https://en.wikipedia.org/wiki/Markdown">Markdown</a> to format your answers.</p>
+<p>We recommend that you name your Bitbucket repository following this convention:</p>
+<pre><code>cs171-hw3-lastname-firstname</code></pre>
+<p>Use the file templates provided for your answers and your code. Make sure your repository is private.</p>
+<h3 id="introductory-questions">Introductory Questions</h3>
+<p><em>Place answers to the questions below in <a href="intro_answers.md" class="uri">intro_answers.md</a>.</em></p>
+<ol style="list-style-type: decimal">
+<li>If we were interested in understanding summary statistics at a glance (minimum, maximum, etc.), how could you improve the display of the table?</li>
+<li>Find three varied examples on the web that present tabular data in a different layout or in more visually compelling, complete, interactive or interesting ways.</li>
+</ol>
+<h2 id="problem-1-analyze-an-html-data-table">Problem 1: Analyze an HTML Data <code>&lt;table&gt;</code></h2>
+<p><em>Place answers to the questions below in <a href="problem_1_answers.md" class="uri">problem_1_answers.md</a>.</em></p>
+<p>The unemployment data available on the BLS website are accessible as an HTML table, located at the following URL:</p>
+<blockquote>
+<p><a href="http://www.bls.gov/web/laus/laumstrk.htm" class="uri">http://www.bls.gov/web/laus/laumstrk.htm</a></p>
+</blockquote>
+<p>Each row represents a state; columns represent the rank, the state's name and the rate of unemployment. Using such a format is common for publishing raw data. However, as you may have noticed during the warm up, tables are not well suited for analysis by humans. For example, finding the minimum and maximum values takes time and requires to scroll as the table is long. Or finding a state if the table is not in alphabetical order also takes time.</p>
+<p>Now take a detailed look at how this table is structured:</p>
+<ul>
+<li>Open the DOM inspector in your browser (see <a href="http://chimera.labs.oreilly.com/books/1230000000345/index.html">Scott Murray Book</a>). As a reminder, the DOM element has a tree structure: identify the subtree corresponding to the table, its root and leaves.</li>
+<li>Open the source code of the page and locate the source HTML of the table.</li>
+</ul>
+<h3 id="questions">Questions</h3>
+<p>When looking at the table's DOM or source code:</p>
+<ol style="list-style-type: decimal">
+<li>What does the <code>colspan=&quot;3&quot;</code> attribute of the <code>&lt;th&gt;</code> node do?</li>
+<li>List all the styles (e.g. border width, text alignment, etc.) applied to the <code>th</code> element containing &quot;Rank&quot;. For each, state whether they are set as an HTML attribute or a CSS style and describe them in a few words. Include only styles directly applied to the element, not styles inherited/cascading from parent elements or styles from the default user agent stylesheet. Exclude overwritten styles. For HTML attributes, state the CSS equivalent.</li>
+<li>What differences do you notice between the DOM inspector and the HTML source? Why would you use the DOM inspector? Why is the HTML source useful?</li>
+</ol>
+<h2 id="problem-2-table-replication">Problem 2: Table Replication</h2>
+<p><em>Implement the features in the provided <a href="table.html" class="uri">table.html</a> file</em></p>
+<p>Creating a table similar to the one on BLS can be done manually with a simple text editor. However, you'd need to go through the same tedious process every time the data is updated. We can do better. Let's create a table dynamically using D3 and the data we provided. As a reminder, D3 is not <em>just</em> a visualization framework: it's simply designed to help manipulate DOM elements (hence the name &quot;Data Driven Documents&quot;). It's well suited for such a task, in spite of there being no visualization involved (yet).</p>
+<p>Your final result should look somewhat like this:</p>
+<p align="center">
+<img src="img/result_table.png" alt="Problem 2 reference solution" />
+</p>
+<p>To get started,</p>
+<ul>
+<li>Brush up on your knowledge of the HTML <code>&lt;table&gt;</code> element. See the MDN <a href="https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Getting_started/Tables">developer guide</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table">reference</a> on the topic. As is common with real world data, the source BLS page may use incorrect tags or use non-standard features or incorrectly formatted HTML. We expect valid, standards-compliant HTML for your submission.</li>
+<li>Inspire yourself from the <a href="http://bl.ocks.org/romsson/8609118">this Gist</a>.</li>
+</ul>
+<p>We extracted the data from the table and put it in the file <a href="unemp_states_us_nov_2013.tsv" class="uri">unemp_states_us_nov_2013.tsv</a>.</p>
+<p>Because of the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Same_origin_policy_for_JavaScript">same-origin policy</a>, you'll need a running local web server. Open a terminal window, change directory to the folder containing <code>table.html</code> and run:</p>
+<pre><code>python -m SimpleHTTPServer</code></pre>
+<p>You'll see your page at <a href="http://localhost:8000/table.html" class="uri">http://localhost:8000/table.html</a>. Note that you'll need to have Python installed (you probably already do if you're on Linux or Mac OS). For more details on how to set up a local web server, refer to <a href="http://my.safaribooksonline.com/book/web-design-and-development/9781449340223/4dot-setup/id452833">CH4</a> of <a href="http://my.safaribooksonline.com/book/web-design-and-development/9781449340223"><em>Interactive Data Visualization</em></a>.</p>
+<h3 id="implementation-tasks">Implementation Tasks</h3>
+<ol style="list-style-type: decimal">
+<li>The <code>d3.tsv()</code> function skips headers (the first row), but that row contains important information. Replace the <code>d3.tsv()</code> call with <code>d3.text()</code> and use the lower-level <code>d3.tsv.parseRows()</code> to parse the TSV (see the <a href="https://github.com/mbostock/d3/wiki/CSV#wiki-tsv">documentation</a>).</li>
+<li>Add column headers <code>&lt;thead&gt;</code> to the DOM, with the headers you just collected in it. It is constructed the same way as the <code>&lt;tbody&gt;</code> elements, but rows use <code>&lt;th&gt;</code>.</li>
+<li>Use D3 to dynamically add an <code>&lt;h1&gt;</code> element matching the title of the BLS page and a <code>&lt;caption&gt;</code> element for table header title. The text values for these can be hardcoded in your Javascript.</li>
+<li>Apply similar table and H1 styling to that used on the BLS website (border, font, etc.). Feel free to cosmetically improve the layout of the page (eg. by adding a background or centering the table). Ensure to use CSS and standards-compliant HTML (<a href="http://validator.w3.org/">HTML validator</a> and <a href="http://jigsaw.w3.org/css-validator/">CSS validator</a>).</li>
+<li>Add zebra rows to the table (i.e. rows with alternating color for increased legibility). Do this only with D3 without using the <code>:nth-child(n)</code> CSS selector.</li>
+<li>When hovering over a cell, use a yellow shade to highlight <em>both</em> the row and the column of the cell without using the CSS <code>:hover</code> selector. You'll find that it's more tricky to highlight the column.</li>
+</ol>
+<h2 id="problem-3-table-sorting">Problem 3: Table Sorting</h2>
+<p><em>Continue working on <a href="table.html" class="uri">table.html</a>.</em></p>
+<p>Dynamically sorting rows (by ascending or descending order) is a simple yet powerful technique to efficiently organize data and find minimal or maximal values on one dimension. We provide you with code samples to make an interactive HTML table and to color cells by rank.</p>
+<p>Here is a function that compares two values, and returns <code>1</code> if a is greater than b, <code>0</code> if a equals b, and <code>-1</code> if b is greater than a.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="fu">ascending</span>(a, b) {
+  <span class="kw">return</span> a &gt; b ? <span class="dv">1</span> : a == b ? <span class="dv">0</span> : -<span class="dv">1</span>;
+}</code></pre>
+<p>This function is part D3 and can be invoked with <a href="https://github.com/mbostock/d3/wiki/Arrays#wiki-d3_ascending"><code>d3.ascending()</code></a></p>
+<p>The next function, <code>.sort()</code>, changes the order of the DOM of the elements. It iterates over all pairs of elements, passing the two elements to the compare function (see the <a href="https://github.com/mbostock/d3/wiki/Selections#wiki-sort">documentation</a>).</p>
+<p>For example, this snippet would sort the table alphabetical by state (actually, it will sort it <a href="https://en.wikipedia.org/wiki/Lexicographical_order"><em>lexicographically</em></a>):</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="ot">tbody</span>.<span class="fu">selectAll</span>(<span class="st">&quot;tr&quot;</span>).<span class="fu">sort</span>(<span class="kw">function</span>(a, b) {
+  <span class="kw">return</span> <span class="ot">d3</span>.<span class="fu">ascending</span>(a[<span class="dv">1</span>], b[<span class="dv">1</span>]);
+});</code></pre>
+<p>We now use the sorting function to reorder the table. As you may have noticed, an HTML <code>&lt;table&gt;</code> vertically orders rows according to their relative position in the DOM. For instance, NORTH DAKOTA is above SOUTH DAKOTA because it appears before it in the DOM. Changing their DOM position will change their Y-position on the screen.</p>
+<h3 id="implementation-tasks-1">Implementation Tasks</h3>
+<ul>
+<li>Use the above code to trigger a state column sort with a click to the <strong>State</strong> <code>&lt;th&gt;</code> cell.</li>
+<li>Similarly, provide functionality such that the <strong>Rate</strong> column is sorted when the respective header cell is clicked. (tip: make sure you are comparing floats, not strings, else the behavior will be subtly wrong)</li>
+<li>Note that sorting by <strong>Rate</strong> can result into ties, causing random and inconsistent sorting. For instance, MISSOURI and TEXAS have a rate of 6.1. Use the alphabetical state order to solve this issue. See the <a href="https://github.com/mbostock/d3/wiki/Arrays#wiki-ordering">documentation</a> for additional information.</li>
+<li>Ensure that zebra row coloring developed in the previous problem is maintained after sorting.</li>
+<li>Reverse the sorting when the user clicks twice on the same column. Use reverse alphabetical order to break ties (ie. descending sort should be the exact opposite of ascending sort).</li>
+<li>On load, sort by <strong>Rate</strong> in ascending order. This happens to be the same order as the source data, but don't assume the source data is sorted.</li>
+<li>Use CSS to change the cursor shown when hovering over the table headers. Use <code>cursor: s-resize</code> if clicking will trigger an ascending sort and <code>cursor: n-resize</code> if it will trigger a descending sort.</li>
+</ul>
+<h2 id="problem-4-rank-colors-and-bar-chart">Problem 4: Rank Colors and Bar Chart</h2>
+<p><em>Continue working on <a href="table.html" class="uri">table.html</a>. Answer the questions in <a href="problem_4_answers.md" class="uri">problem_4_answers.md</a>.</em></p>
+<p>Let's color cells according to their sorted position. This will be your first visual encoding of data... yeah! Below is sample code that creates a color scale. Note this is a linear scale (<a href="https://github.com/mbostock/d3/wiki/Quantitative-Scales#wiki-linear-scales">documentation</a>) since we are mapping numerical values to color.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> color = <span class="ot">d3</span>.<span class="ot">scale</span>.<span class="fu">linear</span>()
+  .<span class="fu">domain</span>([<span class="dv">0</span>, <span class="ot">tbody</span>.<span class="fu">selectAll</span>(<span class="st">&quot;tr&quot;</span>)[<span class="dv">0</span>].<span class="fu">length</span><span class="dv">-1</span>])
+  .<span class="fu">interpolate</span>(<span class="ot">d3</span>.<span class="fu">interpolateRgb</span>)
+  .<span class="fu">range</span>([<span class="st">&quot;orangered&quot;</span>, <span class="st">&quot;silver&quot;</span>])</code></pre>
+<h3 id="questions-1">Questions</h3>
+<ol style="list-style-type: decimal">
+<li>The <code>domain()</code> function is the data range upon which the scale is calculated. What does <code>d3.selectAll(&quot;tbody tr&quot;)[0].length-1</code> mean?</li>
+<li>Add the snippet in your code. Describe, in words, what the following function calls return: <code>color(0)</code>, <code>color(10)</code> and <code>color(150)</code>?</li>
+<li>If the array passed to <code>domain()</code> was the minimum and maximum rate values, how would that change the scale? In what situations would this be appropriate?</li>
+</ol>
+<h3 id="implementation-tasks-2">Implementation Tasks</h3>
+<ul>
+<li>Use the scale described above to set the background color of the Rate column based on the position of the row (lowest rate should be red).</li>
+<li>Make the modifications described in question 3 above (ie. so that the column is colored by rate) and update the relevant code that references the scale.</li>
+</ul>
+<p>The code below adds an extra column to the table, containing a horizontal bar with a width that is proportional to the rank value:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="ot">rows</span>.<span class="fu">insert</span>(<span class="st">&quot;td&quot;</span>).<span class="fu">append</span>(<span class="st">&quot;svg&quot;</span>)
+   .<span class="fu">attr</span>(<span class="st">&quot;width&quot;</span>, width)
+   .<span class="fu">attr</span>(<span class="st">&quot;height&quot;</span>, height)
+   .<span class="fu">append</span>(<span class="st">&quot;rect&quot;</span>)
+   .<span class="fu">attr</span>(<span class="st">&quot;height&quot;</span>, height)
+   .<span class="fu">attr</span>(<span class="st">&quot;width&quot;</span>, <span class="kw">function</span>(d) { <span class="kw">return</span> <span class="fu">parseFloat</span>(d[<span class="dv">0</span>]); });</code></pre>
+<ul>
+<li>Set suitable numerical values for <code>width</code> and <code>height</code>.</li>
+<li>Insert the snippet into your code, add a heading and sorting functionality to this column.</li>
+</ul>
+<h2 id="problem-5-interactive-horizontal-bar-chart">Problem 5: Interactive Horizontal Bar Chart</h2>
+<p><em>Implement the bar chart in <a href="bar.html" class="uri">bar.html</a>. Answer the questions in <a href="problem_5_answers.md" class="uri">problem_5_answers.md</a></em></p>
+<div class="figure">
+<img src="img/result_chart.png" alt="Problem 5 reference solution" /><p class="caption">Problem 5 reference solution</p>
+</div>
+<p>We are now going to create a horizontal bar chart with its own layout. The bars will be encoded will be similar to the chart column of the previous problem, but this time you will have to create your own layout by setting the bar groups' <code>x, y</code> positions.</p>
+<h3 id="bar-chart-creation">Bar Chart Creation</h3>
+<p>Let's first define the perimeter of the visualization canvas and the position on the chart within this canvas. Following D3's <a href="http://bl.ocks.org/mbostock/3019563">margin convention</a> we define the following parameters:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> margin = {<span class="dt">top</span>: <span class="dv">50</span>, <span class="dt">bottom</span>: <span class="dv">10</span>, <span class="dt">left</span>:<span class="dv">300</span>, <span class="dt">right</span>: <span class="dv">40</span>};
+<span class="kw">var</span> width = <span class="dv">900</span> - <span class="ot">margin</span>.<span class="fu">left</span> - <span class="ot">margin</span>.<span class="fu">right</span>;
+<span class="kw">var</span> height = <span class="dv">900</span> - <span class="ot">margin</span>.<span class="fu">top</span> - <span class="ot">margin</span>.<span class="fu">bottom</span>;</code></pre>
+<p>Let's now define the vertical position for each bar. We define it as a linear scale <code>yScale</code>. The bars' width will be defined by <code>xScale</code>.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> xScale = <span class="ot">d3</span>.<span class="ot">scale</span>.<span class="fu">linear</span>().<span class="fu">range</span>([<span class="dv">0</span>, width]);
+<span class="kw">var</span> yScale = <span class="ot">d3</span>.<span class="ot">scale</span>.<span class="fu">ordinal</span>().<span class="fu">rangeRoundBands</span>([<span class="dv">0</span>, height], .<span class="dv">8</span>, <span class="dv">0</span>);</code></pre>
+<h3 id="questions-2">Questions</h3>
+<p>Consider the provided sample code <a href="http://bl.ocks.org/romsson/8639620">this Gist</a> and answer the following questions:</p>
+<ol style="list-style-type: decimal">
+<li>What's missing? Is this bar chart usable in its current form?</li>
+<li>What is the role of each of the three nested levels of <code>g</code> elements? (keep in mind you'll be adding a title to the chart)</li>
+<li>Complete the implementation section below. Is there any consequence if you add the <code>text</code> elements before or after the <code>rect</code> elements? Why?</li>
+</ol>
+<h3 id="implementation-tasks-3">Implementation Tasks</h3>
+<p>To make the chart more useful, let's add some text labels. Below is a code example showing how add a text node within the same SVG group as the bars:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="ot">groups</span>.<span class="fu">append</span>(<span class="st">&quot;text&quot;</span>)
+        .<span class="fu">attr</span>(<span class="st">&quot;x&quot;</span>, <span class="kw">function</span>(d) { <span class="kw">return</span> <span class="fu">xScale</span>(<span class="ot">d</span>.<span class="fu">Rate</span>); })
+        .<span class="fu">attr</span>(<span class="st">&quot;y&quot;</span>, <span class="kw">function</span>(d) { <span class="kw">return</span> bar_height/<span class="dv">2</span>; })
+        .<span class="fu">text</span>(<span class="kw">function</span>(d) { <span class="kw">return</span> <span class="st">&quot;your text&quot;</span>; })</code></pre>
+<p>Open <code>bar.html</code> and add two different labels:</p>
+<ul>
+<li>Row names (ie. state names), which you should put to the left of each bar</li>
+<li>Row values (ie. rank values), will be located within the bar, but at its right end.</li>
+</ul>
+<p>Tip: the <code>text-anchor</code> attribute may come handy and you might want to look at <code>dx</code> and <code>dy</code> attributes for <a href="http://www.w3.org/TR/SVG11/text.html#TSpanElementDXAttribute">relative positioning</a>.</p>
+<p>Finally, add a title centered at the top of the chart chart using a <code>text</code> element.</p>
+<h4 id="reordering-rows-dynamically">Reordering Rows Dynamically</h4>
+<p>Your next task is to reorder the chart, similarly to what you did for the table. You now have more flexibility than before since SVG elements can be freely moved in the 2D space by setting their coordinates. However, we have to manually manage the <code>x, y</code> position of all the elements or groups of elements.</p>
+<p>First, let's add form elements to control the chart's order. Form elements are useful, as they have a familiar affordance (i.e., users know how they work) and their state is visible. Add the following buttons to your bar charts.</p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;label&gt;&lt;input</span><span class="ot"> type=</span><span class="st">&quot;radio&quot;</span><span class="ot"> name=</span><span class="st">&quot;order&quot;</span><span class="ot"> value=</span><span class="st">&quot;state&quot;</span><span class="kw">&gt;</span> State<span class="kw">&lt;/label&gt;</span>
+<span class="kw">&lt;label&gt;&lt;input</span><span class="ot"> type=</span><span class="st">&quot;radio&quot;</span><span class="ot"> name=</span><span class="st">&quot;order&quot;</span><span class="ot"> value=</span><span class="st">&quot;rate&quot;</span><span class="ot"> checked</span><span class="kw">&gt;</span> Rate<span class="kw">&lt;/label&gt;</span></code></pre>
+<p>Moving bars requires to change their coordinates. If you remember the HTML table, we only had to sort the <code>&lt;tr&gt;</code> nodes to visually re-organize the table. But now, <code>rect</code> elements in SVG are only displayed based on their <code>x, y</code> coordinates. You can use the following strategies to change the position of the bars:</p>
+<ul>
+<li>Change the coordinates (but not the data).</li>
+<li>Change the data (and by consequence the coordinates).</li>
+<li>Change the scale function to reflect the new order.</li>
+<li>Change the relative position <code>(dx, dy)</code> of the element.</li>
+<li>Translate the coordinates <code>attr(&quot;transform&quot;, &quot;translate(x, y)&quot;)</code> (which does not change the <code>(x, y)</code> but moves (&quot;translates&quot;) the element).</li>
+</ul>
+<p>We are going to use a data-driven approach and change the bars position using an SVG translation (<code>attr(&quot;transform&quot;)</code>).</p>
+<ul>
+<li>Create a function <code>reorder()</code> which is triggered every time the user clicks on a form element (<code>d3.selectAll(&quot;input&quot;).on(&quot;change&quot;, reorder);</code>)</li>
+<li>Implement the <code>reorder()</code> function as follows:</li>
+<li>Sort the source <code>data</code>. You may reuse previous sorting code you developed (ensure that your correctly break rate ties)</li>
+<li>Translate the bars by completing and using the code snippet below:</li>
+</ul>
+<pre class="sourceCode javascript"><code class="sourceCode javascript">bars
+   .<span class="fu">transition</span>()
+   .<span class="fu">duration</span>(<span class="dv">750</span>)
+   .<span class="fu">delay</span>(<span class="kw">function</span>(d, i) { <span class="kw">return</span> i * <span class="dv">10</span>; })
+   .<span class="fu">attr</span>(<span class="st">&quot;transform&quot;</span>, <span class="kw">function</span>(d, i) { <span class="kw">return</span> <span class="st">&quot;translate(&quot;</span>+ ?? +<span class="st">&quot;, &quot;</span>+ ?? +<span class="st">&quot;)&quot;</span>; }) </code></pre>
+<ul>
+<li>Toggle the sort order (descending/ascending) when the user clicks again on the same radio button. (tip: listen to <code>click</code> event instead of the <code>change</code> event).</li>
+<li>Apply the color scale of the previous problem to the bars (use the final scale we developed: the one based on data range).</li>
+</ul>
+<p>That's it, you have created your first D3 visualization. Congratulations! If you're looking for more, you can continue with the bonus problem.</p>
+<h2 id="bonus-problem">Bonus Problem</h2>
+<p><em>Put your bonus implementation in the files <a href="bonus_table.html" class="uri">bonus_table.html</a> and <a href="bonus_bar.html" class="uri">bonus_bar.html</a>. Use your previous solution as the basis. If you complete all the steps, you will get 0.5 points extra.</em></p>
+<h3 id="table-upgrade">Table Upgrade</h3>
+<ul>
+<li>Insert the bar chart column in the table as the first column instead of the last one (see <a href="https://github.com/mbostock/d3/wiki/Selections#wiki-insert">parameters</a> of the <code>insert()</code> function)</li>
+<li>Add an icon of an arrow pointing up and downwards (as appropriate) next to column header for which the currently sorted column.</li>
+</ul>
+<h3 id="bar-chart-filtering">Bar Chart Filtering</h3>
+<p>Filtering is an important feature to visually reduce the number of displayed objects. It lets the user focus on elements which correspond to a criteria. The markup below adds a slider to the page (ensure you have a modern browser, since this is HTML5 functionality that won't work in <IE10):
+
+```html
+<input type="range" name="points" min="0" max="50" step="1" value="50"> ```</p>
+<ul>
+<li>Filter the bar chart to the top-k elements, where k is the slider's value.</li>
+<li>If a bar disappears because it is below the filtering threshold, color it red first and then make it exit the scene by moving it outside the bottom bounds of the chart (ensure you actually remove the element from the DOM).</li>
+<li>Similarly, to add a bar to the chart, color it green and move it from the bottom of the visualization to its position in the chart.</li>
+</ul>
