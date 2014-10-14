@@ -2,34 +2,93 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>CSc 599.69 Homework 3</title>
+  <title>Unemployment Rates for States</title>
 
   <style type="text/css">
-  /* YOUR CSS */
+
+    body {
+      font: 13px Tahoma, Arial, Helvetica, clean, sans-serif;
+      color: black;
+      background-color: white;
+    }
+
+    h1 {
+      font-family: Tahoma, Arial, Helvetica, sans-serif;
+      color: black;
+      font-size: 180%;
+      font-weight: normal;
+    }
+
+    td, th {
+      padding: 3px 4px;
+      border: 1px black solid;
+    }
+
   </style>
+
 </head>
 <body>
   <script src="http://d3js.org/d3.v3.min.js"></script>
   <script>
-  d3.tsv("unemp_states_us_nov_2013.tsv", function(error, data){
+  
+    // title of the table
+    d3.select("body").                            // in the body tag
+        append("h1").                             // create a h1 tag
+          text("Unemployment Rates for States");  // and set the text of the tag to ...
 
-      var table = d3.select("body").append("table"),
-      tbody = table.append("tbody");
+    // d3.text creates a request for the text file at the specified url.
+    // Using callback, the request is immediately issued with the GET method.
+    // Two args (error, and text). The text is undefined if an error occurs.
+    d3.text("unemp_states_us_nov_2013.tsv", function(error, data) {
+      
+      // parses the specified string, which is the contents of a TSV file
+      // returning an array of arrays representing the parsed rows.
+      var row_ary = d3.tsv.parseRows(data);
 
-      var rows = tbody.selectAll("tr")
-      .data(data)
-      .enter()
-      .append("tr");
+      // create a table inside the body
+      var table = d3.select("body").append("table");    // in the body tag, create a table tag
+      var thead = table.append("thead");                // append a header to the table
+      var tbody = table.append("tbody");                // append a body to the table
 
-      var cells = rows.selectAll("td")
-      .data(function(row) {
-        return d3.range(Object.keys(row).length).map(function(column, i) {
-          return row[Object.keys(row)[i]];
-          });
-        })
-      .enter()
-      .append("td")
-      .text(function(d) { return d; });
-      });
+      var caption = thead.append("tr").                 // append a tr tag to the header
+                            append("th").               // append a th tag to the tr tag
+                              attr("colspan", "3");     // take up 3 col of space
+
+      // From bls webpage
+      // <th align="center" colspan="3"><b>Unemployment Rates for States<br>Monthly
+      // Rankings<br>Seasonally Adjusted<br>Aug. 2014<sup>p</sup><br></b></th>
+      caption.html("<b>Unemployment Rates for States<br>Monthly Rankings<br>Seasonally Adjusted<br>Apr. 2014<sup>p</sup></b>");
+
+      // shift removes the first element of the array.
+      // headers is set to the first element of the array.
+      var headers = row_ary.shift();
+      var heads = thead.append("tr");
+
+      var cellsH = heads.selectAll("th")
+          .data(headers)
+          .enter()
+          .append("th")
+          .text(function(d) { return d; })
+
+      var rows = tbody.
+                  selectAll("tr").
+                    data(row_ary).
+                      enter().
+                        append("tr");
+
+      var cells = rows.
+                      selectAll("td").
+                        data(function(row) {
+                          // console.log(row);
+                          return d3.range(Object.keys(row).length).
+                                    map( function (column, i) {
+                                        return row[Object.keys(row)[i]];
+                                      });
+                          }).
+                          enter().
+                            append("td").
+                              text( function(d) { /*console.log(d);*/ return d; } );
+    });
+
   </script>
 </body>
