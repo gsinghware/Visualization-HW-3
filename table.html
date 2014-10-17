@@ -46,77 +46,145 @@
     // Two args (error, and text). The text is undefined if an error occurs.
     d3.text("unemp_states_us_nov_2013.tsv", function(error, data) {
       
-      // parses the specified string, which is the contents of a TSV file
-      // returning an array of arrays representing the parsed rows.
-      var row_ary = d3.tsv.parseRows(data);
+    // parses the specified string, which is the contents of a TSV file
+    // returning an array of arrays representing the parsed rows.
+    var row_ary = d3.tsv.parseRows(data);
 
-      // create a table inside the body
-      var table = d3.select("body").append("table");    // in the body tag, create a table tag
-      var thead = table.append("thead");                // append a header to the table
-      var tbody = table.append("tbody");                // append a body to the table
+    // create a table inside the body
+    var table = d3.select("body").append("table");    // in the body tag, create a table tag
+    var thead = table.append("thead");                // append a header to the table
+    var tbody = table.append("tbody");                // append a body to the table
 
-      var caption = thead.append("tr").                 // append a tr tag to the header
-                            append("th").               // append a th tag to the tr tag
-                              attr("colspan", "3");     // take up 3 col of space
+    var caption = thead.append("tr").                 // append a tr tag to the header
+                          append("th").               // append a th tag to the tr tag
+                            attr("colspan", "3");     // take up 3 col of space
 
-      // From bls webpage
-      // <th align="center" colspan="3"><b>Unemployment Rates for States<br>Monthly
-      // Rankings<br>Seasonally Adjusted<br>Aug. 2014<sup>p</sup><br></b></th>
-      caption.html("<b>Unemployment Rates for States<br>Monthly Rankings<br>Seasonally Adjusted<br>Apr. 2014<sup>p</sup></b>");
+    // From bls webpage
+    // <th align="center" colspan="3"><b>Unemployment Rates for States<br>Monthly
+    // Rankings<br>Seasonally Adjusted<br>Aug. 2014<sup>p</sup><br></b></th>
+    caption.html("<b>Unemployment Rates for States<br>Monthly Rankings<br>Seasonally Adjusted<br>Apr. 2014<sup>p</sup></b>");
 
-      // shift removes the first element of the array.
-      // headers is set to the first element of the array.
-      var headers = row_ary.shift();
-      var heads = thead.append("tr");                    // append the tr tag to the thead
+    // shift removes the first element of the array.
+    // headers is set to the first element of the array.
+    var headers = row_ary.shift();
+    var heads = thead.append("tr");                    // append the tr tag to the thead
 
-      var cellsH = heads.                                // in the tr tag
-                    selectAll("th").                     // no th tag exists before this, adds it now
-                      // There are three values in our array called headers, so everything past this 
-                      // point is executed three times, once for each value.
-                      data(headers).                     // counts and parses the headers arry.
-                        enter().                         // creates a placeholder 
-                          append("th").                  // appends the placeholder to the DOM
-                            text(function(d) { return d; }); // the text displayed in the th tag
+    var sortbyState = false;
+    var sortbyRank = true;
+    var sortbyRate = true;
 
-      var rows = tbody.                                 // in tbody tag
-                  selectAll("tr").                      // select all the tr tags
-                    data(row_ary).                      // counts and parses the row_ary arry.
-                      enter().                          // created placeholders 
-                        append("tr").                   // append the placeholder to the DOM/
-                          style("background-color", function(d, i) {
-                                                      return ((i % 2 == 0) ? "orange" : "white");
-                                                    }).
-                            on("mouseover", function(d, i) {
-                                              d3.select(this).
-                                                style("background-color", "yellow");
-                                            }).
-                              on("mouseout", function(d, i) {
-                                                var x = i;
-                                                d3.select(this).
-                                                  style("background-color", function(x) {
-                                                        return ((i % 2 == 0) ? "orange" : "white");
-                                                      });
-                                              });
+    function sortby_State (d, i, x) {
+      if (sortbyState) {
+        d3.select(x).style("cursor", "n-resize");       // chnage cursor type
+        sortbyState = false;
+        tbody.selectAll("tr").
+                sort(function(a, b) {
+                        return d3.descending(a[1], b[1]);
+                      }).
+                style("background-color", function(d, i) {
+                                            return ((i % 2 == 0) ? "orange" : "white");
+                                          });
+      } else {
+        d3.select(x).style("cursor", "s-resize");       // chnage cursor type
+        sortbyState = true;
+        tbody.selectAll("tr").
+                sort( function(a, b) {
+                        return d3.ascending(a[1], b[1]);
+                      }).
+                style("background-color", function(d, i) {
+                                            return ((i % 2 == 0) ? "orange" : "white");
+                                          });
+      }
+  };
 
-      var cells = rows.
-                      selectAll("td").                  // create empty td tags
-                        data(function(row) {            // 
-                          //console.log(row);
-                          return d3.range(Object.keys(row).length).
-                                    map( function (column, i) {
-                                        return row[Object.keys(row)[i]];
-                                      });
+  function sortby_Rate (d, i, x) {
+    if (sortbyRate) {
+      d3.select(x).style("cursor", "n-resize");       // chnage cursor type
+      sortbyRate = false;
+      tbody.selectAll("tr").
+              sort(function(a, b) {
+                      if (a[2] == b[2]) {
+                        return d3.ascending(a[1], b[1]);
+                      } else
+                        return d3.descending(parseFloat(a[2]), parseFloat(b[2]));
+                    }).
+              style("background-color", function(d, i) {
+                                          return ((i % 2 == 0) ? "orange" : "white");
+                                        });
+    } else {
+      d3.select(x).style("cursor", "s-resize");        // chnage cursor type
+      sortbyRate = true;
+      tbody.selectAll("tr").
+              sort(function(a, b) {
+                      if (a[2] == b[2]) {
+                        return d3.ascending(a[1], b[1]);
+                      } else
+                        return d3.ascending(parseFloat(a[2]), parseFloat(b[2]));
+                    }).
+              style("background-color", function(d, i) {
+                                          return ((i % 2 == 0) ? "orange" : "white");
+                                        });
+    }
+  };
+
+  var cellsH = heads.                                // in the tr tag
+                selectAll("th").                     // no th tag exists before this, adds it now
+                  // There are three values in our array called headers, so everything past this 
+                  // point is executed three times, once for each value.
+                  data(headers).                     // counts and parses the headers arry.
+                    enter().                         // creates a placeholder 
+                      append("th").                  // appends the placeholder to the DOM
+                        text(function(d, i) { return d; }). // the text displayed in the th tag
+                          on("load", function(d, i) {
+                            sortbyRate(d, i);
                           }).
-                          enter().
-                            append("td").
-                              attr('class', function(d, i){ return "col_" + i; }).
-                                text( function(d, i) { return d; } ).
-                                  on("mouseover", function(d, i) {
-                                                    d3.selectAll('td.col_' + i).style("background-color", "yellow");
-                                                  }).
-                                    on("mouseout", function(d, i) {
-                                                  d3.selectAll('td.col_' + i).style("background-color", null);
-                                                });
+                          on("click", function(d, i) {
+                                        if(i == 1) {
+                                          sortby_State(d, i, this);
+                                        } else if (i == 2) {
+                                          sortby_Rate(d, i, this);
+                                        }
+                                      });
+                          
+  var rows = tbody.                                 // in tbody tag
+              selectAll("tr").                      // select all the tr tags
+                data(row_ary).                      // counts and parses the row_ary arry.
+                  enter().                          // created placeholders 
+                    append("tr").                   // append the placeholder to the DOM/
+                      style("background-color", function(d, i) {
+                                                  return ((i % 2 == 0) ? "orange" : "white");
+                                                }).
+                        on("mouseover", function(d, i) {
+                                          d3.select(this).
+                                            style("background-color", "yellow");
+                                        }).
+                          on("mouseout", function(d, i) {
+                                            var x = i;
+                                            d3.select(this).
+                                              style("background-color", function(x) {
+                                                    return ((i % 2 == 0) ? "orange" : "white");
+                                                  });
+                                          });
+
+  var cells = rows.
+                  selectAll("td").                  // create empty td tags
+                    data(function(row) {            // 
+                      //console.log(row);
+                      return d3.range(Object.keys(row).length).
+                                map( function (column, i) {
+                                    return row[Object.keys(row)[i]];
+                                  });
+                      }).
+                      enter().
+                        append("td").
+                          attr('class', function(d, i){ return "col_" + i; }).
+                            text( function(d, i) { return d; } ).
+                              on("mouseover", function(d, i) {
+                                                d3.selectAll('td.col_' + i).style("background-color", "yellow");
+                                              }).
+                                on("mouseout", function(d, i) {
+                                              d3.selectAll('td.col_' + i).style("background-color", null);
+                                            });
     });     
 
   </script>
