@@ -57,7 +57,7 @@
 
     var caption = thead.append("tr").                 // append a tr tag to the header
                           append("th").               // append a th tag to the tr tag
-                            attr("colspan", "3");     // take up 3 col of space
+                            attr("colspan", "4");     // take up 3 col of space
 
     // From bls webpage
     // <th align="center" colspan="3"><b>Unemployment Rates for States<br>Monthly
@@ -83,6 +83,17 @@
                       }).
                 style("background-color", function(d, i) {
                                             return ((i % 2 == 0) ? "orange" : "white");
+                                          }).
+                        on("mouseover", function(d, i) {
+                                          d3.select(this).
+                                            style("background-color", "yellow");
+                                        }).
+                          on("mouseout", function(d, i) {
+                                            var x = i;
+                                            d3.select(this).
+                                              style("background-color", function(x) {
+                                                    return ((i % 2 == 0) ? "orange" : "white");
+                                                  });
                                           });
       } else {
         d3.select(x).style("cursor", "s-resize");       // chnage cursor type
@@ -93,6 +104,17 @@
                       }).
                 style("background-color", function(d, i) {
                                             return ((i % 2 == 0) ? "orange" : "white");
+                                          }).
+                        on("mouseover", function(d, i) {
+                                          d3.select(this).
+                                            style("background-color", "yellow");
+                                        }).
+                          on("mouseout", function(d, i) {
+                                            var x = i;
+                                            d3.select(this).
+                                              style("background-color", function(x) {
+                                                    return ((i % 2 == 0) ? "orange" : "white");
+                                                  });
                                           });
       }
   };
@@ -110,7 +132,19 @@
                     }).
               style("background-color", function(d, i) {
                                           return ((i % 2 == 0) ? "orange" : "white");
-                                        });
+                                        }).
+                        on("mouseover", function(d, i) {
+                                          d3.select(this).
+                                            style("background-color", "yellow");
+
+                                        }).
+                          on("mouseout", function(d, i) {
+                                            var x = i;
+                                            d3.select(this).
+                                              style("background-color", function(x) {
+                                                    return ((i % 2 == 0) ? "orange" : "white");
+                                                  });
+                                          });
     } else {
       d3.select(x).style("cursor", "s-resize");        // chnage cursor type
       sortbyRate = true;
@@ -123,8 +157,27 @@
                     }).
               style("background-color", function(d, i) {
                                           return ((i % 2 == 0) ? "orange" : "white");
-                                        });
+                                        }).
+                        on("mouseover", function(d, i) {
+                                          d3.select(this).
+                                            style("background-color", "yellow");
+                                        }).
+                          on("mouseout", function(d, i) {
+                                            var x = i;
+                                            d3.select(this).
+                                              style("background-color", function(x) {
+                                                    return ((i % 2 == 0) ? "orange" : "white");
+                                                  });
+                                          });
     }
+  };
+
+  function getcolor(x) {
+          var color = d3.scale.linear().
+                        domain([0, tbody.selectAll("tr")[0].length - 1]).
+                          interpolate(d3.interpolateRgb).
+                            range(["orangered", "silver"]);
+          return color(x);
   };
 
   var cellsH = heads.                                // in the tr tag
@@ -139,13 +192,14 @@
                             sortbyRate(d, i);
                           }).
                           on("click", function(d, i) {
+                                        console.log(i);
                                         if(i == 1) {
                                           sortby_State(d, i, this);
                                         } else if (i == 2) {
                                           sortby_Rate(d, i, this);
                                         }
                                       });
-                          
+
   var rows = tbody.                                 // in tbody tag
               selectAll("tr").                      // select all the tr tags
                 data(row_ary).                      // counts and parses the row_ary arry.
@@ -157,7 +211,7 @@
                         on("mouseover", function(d, i) {
                                           d3.select(this).
                                             style("background-color", "yellow");
-                                        }).
+                                          }).
                           on("mouseout", function(d, i) {
                                             var x = i;
                                             d3.select(this).
@@ -177,15 +231,34 @@
                       }).
                       enter().
                         append("td").
-                          attr('class', function(d, i){ return "col_" + i; }).
+                          attr('class', function(d, i){ return "column_" + i; }).
                             text( function(d, i) { return d; } ).
                               on("mouseover", function(d, i) {
-                                                d3.selectAll('td.col_' + i).style("background-color", "yellow");
+                                                if (i != 2)
+                                                  d3.selectAll('td.column_' + i).style("background-color", "yellow");
                                               }).
                                 on("mouseout", function(d, i) {
-                                              d3.selectAll('td.col_' + i).style("background-color", null);
+                                              if (i != 2)
+                                                d3.selectAll('td.column_' + i).style("background-color", null);
                                             });
-    });     
+
+  d3.selectAll('td.column_2').
+    style("background-color", function(d, i) {
+                                return getcolor(i);
+                              });
+
+  heads.insert("th").text("Chart").on("click", function(d, i) { sortby_Rate(d, i, this); });
+
+  rows.insert("td").
+        append("svg").
+          attr("width", 40).
+            attr("height", 15).
+              append("rect").
+                attr("height", 15).
+                  attr("width", function(d) { return parseFloat(d[0]); });
+
+
+  });   
 
   </script>
 </body>
