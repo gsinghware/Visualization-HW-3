@@ -19,6 +19,11 @@
       font-weight: normal;
     }
 
+    table {
+      border-collapse: collapse;
+      border: 2px black solid; 
+    }
+
     td, th {
       padding: 3px 4px;
       border: 1px black solid;
@@ -28,7 +33,7 @@
 
 </head>
 <body>
-  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="d3.min.js"></script>
   <script>
   
     // title of the table
@@ -62,24 +67,41 @@
       // shift removes the first element of the array.
       // headers is set to the first element of the array.
       var headers = row_ary.shift();
-      var heads = thead.append("tr");
+      var heads = thead.append("tr");                    // append the tr tag to the thead
 
-      var cellsH = heads.selectAll("th")
-          .data(headers)
-          .enter()
-          .append("th")
-          .text(function(d) { return d; })
+      var cellsH = heads.                                // in the tr tag
+                    selectAll("th").                     // no th tag exists before this, adds it now
+                      // There are three values in our array called headers, so everything past this 
+                      // point is executed three times, once for each value.
+                      data(headers).                     // counts and parses the headers arry.
+                        enter().                         // creates a placeholder 
+                          append("th").                  // appends the placeholder to the DOM
+                            text(function(d) { return d; }); // the text displayed in the th tag
 
-      var rows = tbody.
-                  selectAll("tr").
-                    data(row_ary).
-                      enter().
-                        append("tr");
+      var rows = tbody.                                 // in tbody tag
+                  selectAll("tr").                      // select all the tr tags
+                    data(row_ary).                      // counts and parses the row_ary arry.
+                      enter().                          // created placeholders 
+                        append("tr").                   // append the placeholder to the DOM/
+                          style("background-color", function(d, i) {
+                                                      return ((i % 2 == 0) ? "orange" : "white");
+                                                    }).
+                            on("mouseover", function(d, i) {
+                                              d3.select(this).
+                                                style("background-color", "yellow");
+                                            }).
+                              on("mouseout", function(d, i) {
+                                                var x = i;
+                                                d3.select(this).
+                                                  style("background-color", function(x) {
+                                                        return ((i % 2 == 0) ? "orange" : "white");
+                                                      });
+                                              });
 
       var cells = rows.
-                      selectAll("td").
-                        data(function(row) {
-                          // console.log(row);
+                      selectAll("td").                  // create empty td tags
+                        data(function(row) {            // 
+                          //console.log(row);
                           return d3.range(Object.keys(row).length).
                                     map( function (column, i) {
                                         return row[Object.keys(row)[i]];
@@ -87,8 +109,15 @@
                           }).
                           enter().
                             append("td").
-                              text( function(d) { /*console.log(d);*/ return d; } );
-    });
+                              attr('class', function(d, i){ return "col_" + i; }).
+                                text( function(d, i) { return d; } ).
+                                  on("mouseover", function(d, i) {
+                                                    d3.selectAll('td.col_' + i).style("background-color", "yellow");
+                                                  }).
+                                    on("mouseout", function(d, i) {
+                                                  d3.selectAll('td.col_' + i).style("background-color", null);
+                                                });
+    });     
 
   </script>
 </body>
